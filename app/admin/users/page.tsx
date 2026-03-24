@@ -4,7 +4,7 @@ import { formatDate, formatCurrency } from "@/lib/utils";
 import { Search } from "lucide-react";
 
 export default async function AdminUsersPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: users } = await supabase
     .from("profiles")
     .select("*, subscriptions(status, plan, amount_pence, charity_percentage, charities(name))")

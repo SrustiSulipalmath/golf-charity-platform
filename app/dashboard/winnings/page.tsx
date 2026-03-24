@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import WinningsManager from "@/components/dashboard/WinningsManager";
 
 export default async function WinningsPage() {
-  const supabase = createClient();
+  const supabase =await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 

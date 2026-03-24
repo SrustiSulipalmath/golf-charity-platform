@@ -6,12 +6,12 @@ import { formatCurrency, getMonthName, PRIZE_TIER_LABELS } from "@/lib/utils";
 
 export default async function DrawsPage() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await (await supabase).auth.getUser();
   if (!user) redirect("/auth/login");
 
   const [{ data: draws }, { data: myEntries }] = await Promise.all([
-    supabase.from("draws").select("*").eq("status", "published").order("year", { ascending: false }).order("month", { ascending: false }),
-    supabase.from("draw_entries").select("*, draws(month,year)").eq("user_id", user.id),
+    (await supabase).from("draws").select("*").eq("status", "published").order("year", { ascending: false }).order("month", { ascending: false }),
+    (await supabase).from("draw_entries").select("*, draws(month,year)").eq("user_id", user.id),
   ]);
 
   const entryMap = new Map(myEntries?.map(e => [e.draw_id, e]) ?? []);

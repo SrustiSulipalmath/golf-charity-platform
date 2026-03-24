@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/utils";
 
 export default async function CharitiesPage() {
   const supabase = createClient();
-  const { data: charities } = await supabase
+  const { data: charities } = await (await supabase)
     .from("charities")
     .select("*, charity_events(*)")
     .eq("is_active", true)

@@ -5,12 +5,12 @@ import CharitySelector from "@/components/dashboard/CharitySelector";
 
 export default async function CharityPage() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await (await supabase).auth.getUser();
   if (!user) redirect("/auth/login");
 
   const [{ data: charities }, { data: subscription }] = await Promise.all([
-    supabase.from("charities").select("*").eq("is_active", true).order("is_featured", { ascending: false }),
-    supabase.from("subscriptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    (await supabase).from("charities").select("*").eq("is_active", true).order("is_featured", { ascending: false }),
+    (await supabase).from("subscriptions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
 
   return (

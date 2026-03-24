@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import ReportsClient from "@/components/admin/ReportsClient";
 
 export default async function AdminReportsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const [
     { count: totalUsers },

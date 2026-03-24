@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import ScoreManager from "@/components/dashboard/ScoreManager";
 
 export default async function ScoresPage() {
-  const supabase = createClient();
+  const supabase =await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 

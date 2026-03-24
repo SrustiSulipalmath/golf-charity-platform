@@ -6,7 +6,7 @@ import { Target, Heart, Trophy, Medal, ArrowRight, AlertCircle, TrendingUp } fro
 import { formatCurrency, formatDate, getMonthName, PRIZE_TIER_LABELS } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const supabase = createClient();
+  const supabase =await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 

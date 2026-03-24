@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(req: NextRequest) {
   try {
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await (await supabase).auth.getUser();
 
     if (!user) {
       return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const selectedPlan = PLANS[plan as keyof typeof PLANS];
 
     // Check if customer already exists in Stripe
-    const { data: existingSub } = await supabase
+    const { data: existingSub } = await (await supabase)
       .from("subscriptions")
       .select("stripe_customer_id")
       .eq("user_id", user.id)
