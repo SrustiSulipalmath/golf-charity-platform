@@ -30,10 +30,10 @@ export default async function AdminOverview() {
         <p className="text-zinc-500 text-sm">Platform stats and quick actions</p>
       </div>
 
-      {pendingWinners && pendingWinners > 0 && (
+      {pendingWinners != null && pendingWinners > 0 && (
         <div className="flex items-center gap-3 p-4 rounded-xl bg-yellow-400/10 border border-yellow-400/20 text-yellow-300 text-sm">
           <AlertCircle size={16} />
-          <span><strong>{pendingWinners}</strong> winner{pendingWinners !== 1 ? "s" : ""} pending verification. <a href="/admin/winners" className="underline">Review now →</a></span>
+          <span><strong>{pendingWinners}</strong> winner{(pendingWinners ?? 0) !== 1 ? "s" : ""} pending verification. <a href="/admin/winners" className="underline">Review now →</a></span>
         </div>
       )}
 
