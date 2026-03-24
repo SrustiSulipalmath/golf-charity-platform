@@ -4,11 +4,19 @@ A full-stack subscription platform combining golf performance tracking, charity 
 
 ---
 
+## 🌐 Live Demo
+
+**URL**: https://golf-charity-platform-mu.vercel.app
+**Admin Email**: gsmgangadhar30@gmail.com
+**Test Card**: 4242 4242 4242 4242 (12/34, 123)
+
+---
+
 ## 🏗️ Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 14 (App Router), React 18, TypeScript |
+| Frontend | Next.js 15 (App Router), React 18, TypeScript |
 | Styling | Tailwind CSS, Framer Motion |
 | Database | Supabase (PostgreSQL + Row Level Security) |
 | Auth | Supabase Auth (JWT-based) |
@@ -82,7 +90,7 @@ In Supabase Dashboard → Storage:
 CREATE POLICY "Users can upload own proofs" ON storage.objects
   FOR INSERT WITH CHECK (
     bucket_id = 'winner-proofs' AND
-    auth.uid()::text = (storage.foldername(name))[2]
+    (storage.foldername(name))[1] = auth.uid()::text
   );
 ```
 
