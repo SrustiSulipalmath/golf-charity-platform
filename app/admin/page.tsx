@@ -1,6 +1,5 @@
-// app/admin/page.tsx
 import { createClient } from "@/lib/supabase/server";
-import { Users, Trophy, Heart, Medal, TrendingUp, AlertCircle } from "lucide-react";
+import { Users, Trophy, Heart, TrendingUp, AlertCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 export default async function AdminOverview() {
@@ -10,18 +9,19 @@ export default async function AdminOverview() {
     { count: totalUsers },
     { count: activeSubscribers },
     { data: draws },
-    { data: pendingWinners },
+    { data: pendingWinnersData },
     { data: charities },
   ] = await Promise.all([
     supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase.from("subscriptions").select("*", { count: "exact", head: true }).eq("status", "active"),
     supabase.from("draws").select("jackpot_pool, four_match_pool, three_match_pool").eq("status", "published"),
-    supabase.from("winners").select("*", { count: "exact", head: true }).eq("verification_status", "pending"),
+    supabase.from("winners").select("id").eq("verification_status", "pending"),
     supabase.from("charities").select("total_raised").eq("is_active", true),
   ]);
 
   const totalPrizes = draws?.reduce((s, d) => s + d.jackpot_pool + d.four_match_pool + d.three_match_pool, 0) ?? 0;
   const totalCharity = charities?.reduce((s, c) => s + c.total_raised, 0) ?? 0;
+  const pendingWinners = pendingWinnersData?.length ?? 0;
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -30,17 +30,17 @@ export default async function AdminOverview() {
         <p className="text-zinc-500 text-sm">Platform stats and quick actions</p>
       </div>
 
-      {pendingWinners != null && pendingWinners > 0 && (
+      {pendingWinners > 0 && (
         <div className="flex items-center gap-3 p-4 rounded-xl bg-yellow-400/10 border border-yellow-400/20 text-yellow-300 text-sm">
           <AlertCircle size={16} />
-          <span><strong>{pendingWinners}</strong> winner{(pendingWinners ?? 0) !== 1 ? "s" : ""} pending verification. <a href="/admin/winners" className="underline">Review now →</a></span>
+          <span><strong>{pendingWinners}</strong> winner{pendingWinners !== 1 ? "s" : ""} pending verification. <a href="/admin/winners" className="underline">Review now →</a></span>
         </div>
       )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Users", value: totalUsers?.toLocaleString() ?? "0", icon: <Users size={18} />, color: "brand" },
-          { label: "Active Subscribers", value: activeSubscribers?.toLocaleString() ?? "0", icon: <TrendingUp size={18} />, color: "brand" },
+          { label: "Total Users", value: (totalUsers ?? 0).toLocaleString(), icon: <Users size={18} />, color: "brand" },
+          { label: "Active Subscribers", value: (activeSubscribers ?? 0).toLocaleString(), icon: <TrendingUp size={18} />, color: "brand" },
           { label: "Total Prizes Paid", value: formatCurrency(totalPrizes), icon: <Trophy size={18} />, color: "gold" },
           { label: "Charity Raised", value: formatCurrency(totalCharity), icon: <Heart size={18} />, color: "gold" },
         ].map((s, i) => (
@@ -56,7 +56,6 @@ export default async function AdminOverview() {
         ))}
       </div>
 
-      {/* Quick links */}
       <div className="grid md:grid-cols-3 gap-4">
         {[
           { href: "/admin/draws", label: "Manage Draws", desc: "Create, simulate and publish monthly draws", icon: "🎰" },
