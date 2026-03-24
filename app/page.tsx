@@ -4,7 +4,8 @@ import { ArrowRight, Heart, Trophy, Target, Users, Star, ChevronDown } from "luc
 import { createClient } from "@/lib/supabase/server";
 
 async function getFeaturedCharity() {
-  const supabase = createClient();
+  // ✅ Add await here
+  const supabase = await createClient();
   const { data } = await supabase
     .from("charities")
     .select("*")
@@ -14,12 +15,13 @@ async function getFeaturedCharity() {
 }
 
 async function getStats() {
-  const supabase = createClient();
+  // ✅ Add await here
+  const supabase = await createClient();
   const [{ count: subscribers }, { data: draws }] = await Promise.all([
     supabase.from("subscriptions").select("*", { count: "exact" }).eq("status", "active"),
     supabase.from("draws").select("jackpot_pool,four_match_pool,three_match_pool").eq("status", "published"),
   ]);
-  const totalPrizes = draws?.reduce((sum, d) => sum + d.jackpot_pool + d.four_match_pool + d.three_match_pool, 0) ?? 0;
+  const totalPrizes = draws?.reduce((sum: number, d: any) => sum + d.jackpot_pool + d.four_match_pool + d.three_match_pool, 0) ?? 0;
   return { subscribers: subscribers ?? 0, totalPrizes };
 }
 
