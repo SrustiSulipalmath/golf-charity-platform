@@ -16,12 +16,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const supabase = createAdminClient();
+  // ✅ Add await here - createAdminClient is now async
+  const supabase = await createAdminClient();
 
   try {
     switch (event.type) {
       case "checkout.session.completed": {
-        const session = event.data.object as Stripe.CheckoutSession;
+        const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.metadata?.supabase_user_id;
         const plan = session.metadata?.plan as "monthly" | "yearly";
         if (!userId || !plan) break;
